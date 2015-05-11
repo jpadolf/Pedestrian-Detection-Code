@@ -1,4 +1,4 @@
-function NMSwindows = detect_pedestrian(image_path,model,numscales,overlap,scaling,sss)
+function NMSwindows = detect_pedestrian(image_path,model,numscales,overlap,scaling,srs)
 
 img = imread(image_path);
 if length(size(img)) == 3 % if RGB
@@ -25,10 +25,12 @@ for l = size(windows,1):-1:size(windows,1)-numscales+1
   for i = 1:size(windows{l},1)
       for j = 1:size(windows{l},2)
           im_temp = windows{l}(i,j).pixels;
-          hog = vl_hog(im_temp,8,'variant','dalaltriggs');
-          imhog = vl_hog('render',hog,'variant','dalaltriggs');
-          featval = imhog(:)';
-          feat(count,:) = featval;
+%           hog = vl_hog(im_temp,8,'variant','dalaltriggs');
+%           imhog = vl_hog('render',hog,'variant','dalaltriggs');
+%           featval = imhog(:)';
+%           feat(count,:) = featval;
+            imhog = extractHOGFeatures(im_temp);
+            feat(count,:) = imhog;
           count = count+1;
       end
   end
@@ -45,9 +47,9 @@ for l = size(windows,1):-1:size(windows,1)-numscales+1
   end
 end
 
-% figure, plot_boxes(imread(image_path),windows,results);
+figure(1), plot_boxes(imread(image_path),windows,results);
 
-NMSwindows = NMS(windows,results,sss);
-figure,plot_boxes_NMS(imread(image_path),NMSwindows);
+NMSwindows = NMS(windows,results,srs);
+figure(2),plot_boxes_NMS(imread(image_path),NMSwindows);
 
 end

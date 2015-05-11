@@ -26,10 +26,6 @@ for index = 1:size(results,1)
                     j1max = min(j1+2, size(results{index+1},2));
                     
                     r1 = reshape(results{index+1}(i1min:i1max,j1min:j1max),1,[]);
-                    % SINGLE SCALE SUPPRESSION
-                    if (sss && isempty(find(r1>0,1)))
-                        continue
-                    end
                     w1 = reshape(windows{index+1}(i1min:i1max,j1min:j1max),1,[]);
                     r = [r r1];
                     w = [w w1];
@@ -49,6 +45,12 @@ for index = 1:size(results,1)
                     results{index+2}(i2min:i2max,j2min:j2max) = -1;
                 end
                 num = length(find(r>0));
+                
+                % SINGLE SCALE SUPPRESSION
+                if (sss && num == 1)
+                    continue
+                end
+                
                 w_mean = Mean(w(find(r>0)),num);
                 NMSwindows = [NMSwindows w_mean];
             end
