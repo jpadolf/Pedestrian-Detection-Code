@@ -28,7 +28,7 @@ open(outputVideo2);
 for i = 1:numfids
     tic
     i
-    NMSwindows = detect_pedestrian(fullfile('../Files/VideoImages',fnames(i).name),mod2_csvm,0,10,.75,1);
+    NMSwindows = detect_pedestrian(fullfile('../Files/VideoImages',fnames(i).name),mod2,0,10,.75,1);
     F1 = getframe(1);
     writeVideo(outputVideo1,F1);
     F2 = getframe(2);
