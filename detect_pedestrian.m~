@@ -1,0 +1,43 @@
+function NMSwindows = detect_pedestrian(image_path,model,sss)
+
+f = single(rgb2gray(imread(image_path)));
+windows = create_windows(f,16,0.75);
+  
+%%
+results = cell(size(windows));
+for index = 1:size(windows,1)
+results{index,1} = -ones(size(windows{index}));
+end
+
+%%
+count = 1;
+for l = size(windows,1):-1:size(windows,1)-1
+  for i = 1:size(windows{l},1)
+      for j = 1:size(windows{l},2)
+          im_temp = windows{l}(i,j).pixels;
+          hog = vl_hog(im_temp,8,'variant','dalaltriggs');
+          imhog = vl_hog('render',hog,'variant','dalaltriggs');
+          featval = imhog(:)';
+          feat(count,:) = featval;
+          count = count+1;
+      end
+  end
+end
+
+res = predict(model,feat);
+count = 1;
+for l = size(windows,1):-1:size(windows,1)-1
+  for i = 1:size(windows{l},1)
+      for j = 1:size(windows{l},2)
+         results{l}(i,j) = res(count);
+         count = count+1;
+      end
+  end
+end
+
+% figure, plot_boxes(imread(hh),windows,results);
+
+NMSwindows = NMS(windows,results,sss);
+figure,plot_boxes_NMS(hh,NMSwindows);
+
+end
